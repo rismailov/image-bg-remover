@@ -73,10 +73,7 @@ export const Dropzone = () => {
                 }),
             )
             .catch((e) => {
-                if (
-                    isAxiosError<{ detail?: string }>(e) &&
-                    e.response?.data.detail
-                ) {
+                if (isAxiosError(e) && e.response?.data.detail) {
                     toast(e.response.data.detail)
                 }
             })
@@ -86,7 +83,40 @@ export const Dropzone = () => {
     }
 
     const downloadFile = () => {
-        alert('Download file')
+        updateState({ isSubmitting: true })
+
+        axios
+            .get<Blob>(`/images/download/${resultPath}`, {
+                responseType: 'blob',
+            })
+            .then(({ headers, data }) => {
+                const disposition = headers['content-disposition']
+                let filename = disposition.split(/;(.+)/)[1].split(/=(.+)/)[1]
+
+                if (filename.toLowerCase().startsWith("utf-8''")) {
+                    filename = decodeURIComponent(
+                        filename.replace("utf-8''", ''),
+                    )
+                } else {
+                    filename = filename.replace(/['"]/g, '')
+                }
+
+                const url = window.URL.createObjectURL(data)
+                const a = document.createElement('a')
+
+                a.href = url
+                a.download = filename
+                document.body.appendChild(a) // append the element to the dom
+
+                a.click()
+                a.remove() // afterwards, remove the element
+            })
+            .catch((e) => {
+                if (isAxiosError(e) && e.response?.data.detail) {
+                    toast(e.response?.data.detail)
+                }
+            })
+            .finally(() => updateState({ isSubmitting: false }))
     }
 
     return (

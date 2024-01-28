@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from rembg import remove
 
@@ -83,3 +84,19 @@ async def upload_file(file: UploadFile):
         raise HTTPException(500, detail="There was an error uploading the image.")
     finally:
         file.file.close()
+
+
+@app.get("/images/download/{file_path:path}")
+async def download_file(file_path: str):
+    if os.path.isfile(file_path):
+        return FileResponse(
+            file_path,
+            media_type="image/png",
+            filename=os.path.basename(file_path),
+            headers={"Access-Control-Expose-Headers": "Content-Disposition"},
+        )
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Unable to download. File not found.",
+    )
