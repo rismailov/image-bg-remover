@@ -73,8 +73,11 @@ export const Dropzone = () => {
                 }),
             )
             .catch((e) => {
-                if (isAxiosError<{ message: string }>(e)) {
-                    toast(e.response?.data.message)
+                if (
+                    isAxiosError<{ detail?: string }>(e) &&
+                    e.response?.data.detail
+                ) {
+                    toast(e.response.data.detail)
                 }
             })
             .finally(() => {
@@ -144,6 +147,7 @@ export const Dropzone = () => {
 
             <input
                 ref={inputRef}
+                accept="image/jpeg, image/png, image/webp"
                 id="dropzone-file"
                 onChange={onChange}
                 type="file"
