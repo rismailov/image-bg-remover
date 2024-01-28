@@ -3,7 +3,7 @@ module.exports = {
     env: { browser: true, es2020: true },
     extends: [
         'eslint:recommended',
-        'plugin:@typescript-eslint/recommended-type-checked',
+        'plugin:@typescript-eslint/recommended',
         'plugin:react-hooks/recommended',
         'plugin:react/recommended',
         'plugin:react/jsx-runtime',
@@ -28,4 +28,14 @@ module.exports = {
             version: 'detect',
         },
     },
+    // https://github.com/shadcn-ui/ui/issues/120#issuecomment-1828081539
+    overrides: [
+        {
+            files: ['**/components/ui/*.tsx'],
+            rules: {
+                'react/prop-types': [2, { ignore: ['className'] }],
+                'react-refresh/only-export-components': 'off',
+            },
+        },
+    ],
 }
