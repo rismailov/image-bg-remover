@@ -148,7 +148,7 @@ export const Dropzone = () => {
                         </p>
 
                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                            SVG, PNG, JPG or WEBP (Max: 800x400px)
+                            JPEG, PNG, JPG or WEBP (Max size: 5MB)
                         </p>
                     </div>
                 </label>
