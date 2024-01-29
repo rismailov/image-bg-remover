@@ -1,6 +1,7 @@
 import os
 
 from dotenv import load_dotenv
+from pathlib import Path
 from fastapi import FastAPI, HTTPException, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -22,9 +23,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+script_dir = os.path.dirname(__file__)
+absolute_file_path = os.path.join(script_dir, "static/")
+
 # serve static files
 # https://fastapi.tiangolo.com/tutorial/static-files/
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=absolute_file_path), name="static")
 
 
 PATH_TO_IMAGES = "./static/images/"
